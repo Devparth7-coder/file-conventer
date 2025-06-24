@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Converter</title>
+    <style>
+        .upload-area {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .file-list {
+            margin: 20px 0;
+        }
+        .convert-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>File Format Converter</h1>
+    
+    <div class="upload-area" id="dropArea">
+        <p>Drag & drop files here or click to browse</p>
+        <input type="file" id="fileInput" multiple>
+    </div>
+    
+    <div class="file-list" id="fileList"></div>
+    
+    <div class="options">
+        <label for="format">Convert to:</label>
+        <select id="format">
+            <option value="pdf">PDF</option>
+            <option value="docx">Word</option>
+            <option value="jpg">JPG</option>
+        </select>
+        
+        <button class="convert-btn" id="convertBtn">Convert Files</button>
+    </div>
+    
+    <script>
+        // JavaScript for handling file uploads and conversion
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropArea = document.getElementById('dropArea');
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const convertBtn = document.getElementById('convertBtn');
+            
+            // Handle drag and drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                dropArea.classList.add('highlight');
+            }
+            
+            function unhighlight() {
+                dropArea.classList.remove('highlight');
+            }
+            
+            // Handle dropped files
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            // Handle selected files
+            fileInput.addEventListener('change', function() {
+                handleFiles(this.files);
+            });
+            
+            // Display selected files
+            function handleFiles(files) {
+                fileList.innerHTML = '';
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileItem = document.createElement('div');
+                    fileItem.textContent = `${file.name} (${formatFileSize(file.size)})`;
+                    fileList.appendChild(fileItem);
+                }
+            }
+            
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            // Convert files
+            convertBtn.addEventListener('click', function() {
+                // In a real app, this would send files to the server for conversion
+                alert('In a real implementation, files would be sent to the server for conversion.');
+            });
+        });
+    </script>
+</body>
+</html>
